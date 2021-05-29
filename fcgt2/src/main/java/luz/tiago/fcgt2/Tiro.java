@@ -34,7 +34,7 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 public class Tiro extends Element {
 
     private final int angulo;
-    private final int forca;
+    private final double forca;
     int tipo;
 
     Tiro(Canhao canhao) {
@@ -51,41 +51,27 @@ public class Tiro extends Element {
         this.y = aviao.y;
         this.z = aviao.z;
         this.angulo = 0;
-        this.forca = 0;
+        this.forca = 0.0;
         tipo = 2;
     }
 
     @Override
     public void draw() {
+        if(this.remover) {
+            return;
+        }
+        calculaIdade();
         switch (tipo) {
             case 1:
-                desenhaTiroCanhao();
+                drawTiroCanhao();
                 break;
             default:
-                desenhaTiroAviao();
+                drawTiroAviao();
                 break;
         }
     }
-
-    void desenhaTiroCanhao() {
-        glPushMatrix();
-
-        // desenha bala
-        glTranslated(x+100, y+100, z);
-
-        glLineWidth(3);
-        glColor4f(1f, 1f, 1f, 1f);
-
-        glBegin(GL11.GL_POLYGON);
-
-        glVertex2f(0, 0);
-        glVertex2f(0, 10);
-        glVertex2f(5, 15);
-        glVertex2f(10, 10);
-        glVertex2f(10, 0);
-
-        glEnd();
-
+    
+    void drawFogo() {
         // desenha fogo
         if (new Date().getTime() % 2 == 0) {
             glColor4f(1f, 1f, 0f, 1f);
@@ -104,12 +90,79 @@ public class Tiro extends Element {
         glVertex2f(7, 0);
 
         glEnd();
+    }
+    
+    void drawBala() {
+        glBegin(GL11.GL_POLYGON);
+
+        glVertex2f(0, 0);
+        glVertex2f(0, 10);
+        glVertex2f(5, 15);
+        glVertex2f(10, 10);
+        glVertex2f(10, 0);
+
+        glEnd();
+    }
+    
+    void drawTiroCanhao() {
+        glPushMatrix();
+        
+        double vel = 30.0+(this.forca*40.0);
+        
+        double Yinit = 50; // + 40 + ((this.forca-1) * 20);
+        
+        // calcula x MRU 
+        double anguloCalc = Math.toRadians(90+this.angulo); 
+        
+        double novoX = (x + 45 + (idade/1000 * vel * Math.cos(anguloCalc)));
+        
+        // calcula y MRUV
+        double gravidade = 30.0;
+        
+        double t = (idade/1000.0);
+        double novoY = Yinit + vel * t + ((gravidade*-1) * Math.pow(t,2)/2);
+        
+        // desenha bala
+        glTranslated(novoX, novoY, z);
+
+        glLineWidth(3);
+        glColor4f(1f, 1f, 1f, 1f);
+
+        drawBala();
+
+        drawFogo();
 
         glPopMatrix();
     }
 
-    void desenhaTiroAviao() {
+    void drawTiroAviao() {
+        glPushMatrix();
 
+        // desenha bala
+        
+        // calcula x MRU 
+        double velX = Main.WIDTH / 15.0;
+        double novoX = (x + 50 - (idade/1000 * velX));
+
+        // calcula y MRUV
+        int gravidade = 30;
+        
+        double novoY = y - (gravidade * Math.pow(idade/1000, 2) / 2);
+        
+        
+        glTranslated(novoX, novoY, z);
+        
+        GL11.glRotated(180, 0, 0, 1);
+
+        glLineWidth(3);
+        
+        glColor4f(1f, 0f, 0f, 1f);
+
+        drawBala();
+
+        drawFogo();
+
+        glPopMatrix();
     }
 
 }

@@ -36,7 +36,7 @@ public class Aviao extends Element {
     public static int count = 0;
     public int number;
     int tipo;
-    private double idade;
+    
 
     public Aviao() {
         super();
@@ -56,6 +56,9 @@ public class Aviao extends Element {
         }
 
         calculaIdade();
+        
+        this.idade /= 15000.0;
+        
         if (this.idade > 1.2) {
             this.start = new Date().getTime();
             this.alturaAleatoria();
@@ -76,10 +79,7 @@ public class Aviao extends Element {
         }
     }
 
-    void calculaIdade() {
-        long now = new Date().getTime();
-        this.idade = (now - this.start) / 15000.0;
-    }
+    
 
     void drawTipo1() {
 

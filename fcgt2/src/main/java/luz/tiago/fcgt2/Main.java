@@ -24,6 +24,7 @@ import org.lwjgl.system.*;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -83,15 +84,22 @@ public class Main {
     }
 
     int lastAviaoCreated = 0;
+    Random random = new Random();
 
     void createAviao() {
-        
-        long count = this.avioes.parallelStream().filter((d)->d.remover == false).count();
-        
-        if(count >= 10) {
+
+        // escolhe um avião para atirar 
+        if(avioes.size() > 0) {
+            Aviao aviao = avioes.get(random.nextInt(avioes.size()));
+            aviaoAtirar(aviao);
+        }
+
+        long count = this.avioes.parallelStream().filter((d) -> d.remover == false).count();
+
+        if (count >= 10) {
             return;
         }
-        
+
         lastAviaoCreated++;
         Aviao a = new Aviao();
         a.tipo = lastAviaoCreated % 3;
@@ -314,5 +322,9 @@ public class Main {
         if (this.canhao.angulo > -80) {
             this.canhao.angulo -= 10;
         }
+    }
+
+    private void aviaoAtirar(Aviao aviao) {
+        tirosAvioes.add(new Tiro(aviao));
     }
 }

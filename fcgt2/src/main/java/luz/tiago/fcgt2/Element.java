@@ -29,6 +29,7 @@ public abstract class Element {
     public int scale;
     public long start;
     public boolean remover = false;
+    public double idade;
     
     Element() {
         this.start = new Date().getTime();
@@ -36,6 +37,10 @@ public abstract class Element {
     
     public abstract void draw();
     
+    void calculaIdade() {
+        long now = new Date().getTime();
+        this.idade = (now - this.start) ;
+    }
     
     @Override
     public String toString() {

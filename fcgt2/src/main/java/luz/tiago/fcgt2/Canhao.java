@@ -41,6 +41,7 @@ public class Canhao extends Element {
     Canhao() {
         super();
         z = 0;
+        x = Main.WIDTH/2;
     }
 
     @Override
@@ -76,13 +77,13 @@ public class Canhao extends Element {
         
         glBegin(GL11.GL_POLYGON);
 
-        int f = 60;
+        int f = 20;
         if(this.forca == 1) {
-            f = 40;
+            f = 10;
         } else if(this.forca == 2) {
-            f = 60;
+            f = 20;
         } else if(this.forca == 3) {
-            f = 80;
+            f = 40;
         } 
         
         glVertex2f(0, 0);
