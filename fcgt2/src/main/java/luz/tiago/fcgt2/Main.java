@@ -25,6 +25,7 @@ import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -47,6 +48,7 @@ public class Main {
     List<Aviao> avioes;
     List<Tiro> tirosAvioes;
     List<Tiro> tirosCanhao;
+    List<Explosao> explosoes;
 
     public static Sound sound;
 
@@ -62,10 +64,11 @@ public class Main {
 
     public Main() {
         this.canhao = new Canhao();
-        this.predios = new ArrayList<>();
-        this.avioes = new ArrayList<>();
-        this.tirosAvioes = new ArrayList<>();
-        this.tirosCanhao = new ArrayList<>();
+        this.predios = new CopyOnWriteArrayList<>();
+        this.avioes = new CopyOnWriteArrayList<>();
+        this.tirosAvioes = new CopyOnWriteArrayList<>();
+        this.tirosCanhao = new CopyOnWriteArrayList<>();
+        this.explosoes = new CopyOnWriteArrayList<>();
 
         createPredios();
 
@@ -89,9 +92,19 @@ public class Main {
     void createAviao() {
 
         // escolhe um avião para atirar 
-        if(avioes.size() > 0) {
-            Aviao aviao = avioes.get(random.nextInt(avioes.size()));
-            aviaoAtirar(aviao);
+        if (avioes.size() > 0) {
+            Aviao aviao = null;
+            int count = 0;
+            do {
+                count++;
+                if (count == 30) {
+                    break;
+                }
+                aviao = avioes.get(random.nextInt(avioes.size()));
+            } while (aviao.remover == false);
+            if (aviao != null) {
+                aviaoAtirar(aviao);
+            }
         }
 
         long count = this.avioes.parallelStream().filter((d) -> d.remover == false).count();
@@ -121,7 +134,6 @@ public class Main {
     }
 
     public void run() {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         init();
         loop();
@@ -214,7 +226,8 @@ public class Main {
     }
 
     void debug() {
-        for (Aviao a : avioes) {
+        System.out.println("----- debug ------");
+        for (Explosao a : explosoes) {
             System.out.println(a);
         }
     }
@@ -229,9 +242,6 @@ public class Main {
 
         // Desenhar
         canhao.draw();
-        
-        Explosao e = new Explosao(canhao);
-                      
 
         for (Predio p : predios) {
             p.draw();
@@ -242,11 +252,49 @@ public class Main {
         }
 
         for (Tiro t : tirosAvioes) {
+            if (t.remover) {
+                continue;
+            }
+            for (Predio a : predios) {
+                if (a.remover) {
+                    continue;
+                }
+                if (a.hasColision(t)) {
+                    explosoes.add(new Explosao(a));
+                    t.remover = true;
+                    a.remover = true;
+                    continue;
+                }
+            }
+            if (!t.remover) {
+                t.draw();
+            }
+
             t.draw();
         }
 
         for (Tiro t : tirosCanhao) {
-            t.draw();
+            if (t.remover) {
+                continue;
+            }
+            for (Aviao a : avioes) {
+                if (a.remover) {
+                    continue;
+                }
+                if (a.hasColision(t)) {
+                    explosoes.add(new Explosao(a));
+                    t.remover = true;
+                    a.remover = true;
+                    continue;
+                }
+            }
+            if (!t.remover) {
+                t.draw();
+            }
+        }
+
+        for (Explosao ex : explosoes) {
+            ex.draw();
         }
 
         // fim desenhar

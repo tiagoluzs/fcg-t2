@@ -77,6 +77,13 @@ public class Aviao extends Element {
             default:
                 drawTipo3();
         }
+        
+        this.minX = (int) (x );
+        this.maxX = (int) (x + 130.0);
+        
+        this.minY = (int) (y);
+        this.maxY = (int) (y + 40.0);
+        
     }
 
     
@@ -174,6 +181,7 @@ public class Aviao extends Element {
         glVertex2f(50, 45);
         glVertex2f(40, 20);
         glVertex2f(10, 20);
+        
     }
 
     private void alturaAleatoria() {

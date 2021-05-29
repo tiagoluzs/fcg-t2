@@ -23,6 +23,7 @@ import java.util.Date;
  * @author tiagoluz
  */
 public abstract class Element {
+
     public int x;
     public int y;
     public int z = 0;
@@ -30,21 +31,35 @@ public abstract class Element {
     public long start;
     public boolean remover = false;
     public double idade;
-    
+
+    // envelope para detectar colisão
+    public int minX;
+    public int maxX;
+    public int minY;
+    public int maxY;
+
     Element() {
         this.start = new Date().getTime();
     }
-    
+
     public abstract void draw();
-    
+
     void calculaIdade() {
         long now = new Date().getTime();
-        this.idade = (now - this.start) ;
+        this.idade = (now - this.start);
     }
-    
+
     @Override
     public String toString() {
-        return this.x + ","+this.y + "," + this.z + "@" + this.start;
+        return this.x + "," + this.y + "," + this.z + "@" + this.start;
+    }
+
+    boolean hasColision(Element el) {
+
+        boolean cx = !(this.maxX < el.minX || el.maxX < this.minX);
+        boolean cy = !(this.maxY < el.minY || el.maxY < this.minY);
+
+        return cx && cy;
     }
 
 }

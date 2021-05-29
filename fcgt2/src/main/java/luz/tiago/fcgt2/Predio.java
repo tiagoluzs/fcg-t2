@@ -29,6 +29,10 @@ public class Predio extends Element {
     @Override
     public void draw() {
 
+        if (remover == true) {
+            return;
+        }
+
         glPushMatrix();
 
         glTranslated(x, y, z);
@@ -36,19 +40,30 @@ public class Predio extends Element {
         switch (tipo) {
             case 0:
                 drawTipo1();
+                this.minX = x;
+                this.maxX = x + 30;
+                this.minY = 0;
+                this.maxY = 100;
                 break;
             case 1:
                 drawTipo2();
+                this.minX = x - 10;
+                this.maxX = x + 80;
+                this.minY = 0;
+                this.maxY = 30;
                 break;
             case 2:
                 drawTipo3();
+                this.minX = x + 10;
+                this.maxX = x + 40;
+                this.minY = 0;
+                this.maxY = 110;
                 break;
             default:
                 drawTipo1();
         }
 
         glPopMatrix();
-        
 
     }
 

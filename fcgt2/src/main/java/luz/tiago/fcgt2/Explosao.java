@@ -35,34 +35,43 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 public class Explosao extends Element {
 
     public Explosao() {
-        super();       
+        super();
     }
 
     Explosao(Canhao canhao) {
-       this.x = canhao.x + 100;
-       this.y = canhao.y + 100;
-       this.z = canhao.z;
+        this.x = canhao.x + 100;
+        this.y = canhao.y + 100;
+        this.z = canhao.z;
+    }
+
+    Explosao(Aviao a) {
+        this.x = a.x;
+        this.y = a.y;
+        this.z = a.z;
+    }
+    
+    Explosao(Predio a) {
+        this.x = a.x;
+        this.y = a.y;
+        this.z = a.z;
     }
 
     @Override
     public void draw() {
-        if(remover) {
+        if (remover) {
             return;
         }
-        
+
         this.calculaIdade();
-        
-        System.out.println(this.start);
+
         System.out.println(this.idade);
-                
-        if (idade > 5) {
+
+        if (idade > 1000) {
             this.remover = true;
             return;
         }
 
-        double angGirar = 360 / idade;
-        
-        
+        double angGirar = 360 / 100 * idade;
 
         glPushMatrix();
 
@@ -120,4 +129,11 @@ public class Explosao extends Element {
         glPopMatrix();
     }
 
+    @Override
+    public String toString() {
+        return "Explosão (" + (remover ? "remover" : "ativa") + ")" + super.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+    
 }

@@ -139,6 +139,13 @@ public class Tiro extends Element {
             rotate = true;
         }
 
+        this.minX = (int) (novoX - 10.0);
+        this.maxX = (int) (novoX + 10.0);
+        
+        this.minY = (int) (novoY - 10.0);
+        this.maxY = (int) (novoY + 10.0);
+        
+        
         glTranslated(novoX, novoY, z);
 
         // desenha bala
@@ -170,9 +177,20 @@ public class Tiro extends Element {
         // calcula y MRUV
         int gravidade = 30;
 
-        double novoY = y - (gravidade * Math.pow(idade / 1000, 2) / 2);
-
+        double Vini = Math.abs((gravidade * Math.pow(4,2)/2 - y) / 4);
+        
+        double novoY = y - (Vini*(idade / 1000)) - (gravidade * Math.pow(idade / 1000, 2) / 2);
+        
+        //double novoY = y - (gravidade * Math.pow(idade / 1000, 2) / 2);
+        
         glTranslated(novoX, novoY, z);
+        
+        this.minX = (int) (novoX - 10.0);
+        this.maxX = (int) (novoX + 10.0);
+        
+        this.minY = (int) (novoY - 10.0);
+        this.maxY = (int) (novoY + 10.0);
+        
 
         GL11.glRotated(180, 0, 0, 1);
 
