@@ -23,6 +23,11 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 
 /**
  *
@@ -51,8 +56,37 @@ public class Sound {
         t.start();
     }
 
-    Sequencer rockSequencer;
+    public void playAudio(File file) {
+        Thread t = new Thread(() -> {
+            try {
+                AudioInputStream stream;
+                AudioFormat format;
+                DataLine.Info info;
+                Clip clip;
 
+                stream = AudioSystem.getAudioInputStream(file);
+                format = stream.getFormat();
+                info = new DataLine.Info(Clip.class, format);
+                clip = (Clip) AudioSystem.getLine(info);
+                clip.open(stream);
+                clip.start();
+            } catch (Exception e) {
+                //whatevers
+            }
+        });
+        t.start();
+    }
+
+    Sequencer rockSequencer;
+    
+    public void playFire() {
+        this.playAudio(new File("assets/fire.wav"));
+    }
+    
+    public void playExplosion() {
+        this.playAudio(new File("assets/exp.wav"));
+    }
+    
     public void rock() {
         File file = new File("assets/entersandman.mid");
         Thread t = new Thread(() -> {

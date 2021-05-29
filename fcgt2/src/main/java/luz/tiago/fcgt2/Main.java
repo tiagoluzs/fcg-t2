@@ -16,13 +16,11 @@
  */
 package luz.tiago.fcgt2;
 
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -263,6 +261,7 @@ public class Main {
                     explosoes.add(new Explosao(a));
                     t.remover = true;
                     a.remover = true;
+                    sound.playExplosion();
                     continue;
                 }
             }
@@ -285,6 +284,7 @@ public class Main {
                     explosoes.add(new Explosao(a));
                     t.remover = true;
                     a.remover = true;
+                    sound.playExplosion();
                     continue;
                 }
             }
@@ -335,6 +335,7 @@ public class Main {
     private void spaceTyped() {
         Tiro t = new Tiro(this.canhao);
         this.tirosCanhao.add(t);
+        sound.playFire();
     }
 
     private void downTyped() {
