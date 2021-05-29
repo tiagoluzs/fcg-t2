@@ -229,6 +229,9 @@ public class Main {
 
         // Desenhar
         canhao.draw();
+        
+        Explosao e = new Explosao(canhao);
+                      
 
         for (Predio p : predios) {
             p.draw();
