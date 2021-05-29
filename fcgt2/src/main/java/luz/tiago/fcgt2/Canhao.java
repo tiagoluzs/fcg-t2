@@ -50,7 +50,13 @@ public class Canhao extends Element {
         glPushMatrix();
 
         glTranslated(x, y, z);
-
+        
+        
+        this.minX = x;
+        this.maxX = x+100;
+        this.minY = 0;
+        this.maxY = 50;
+        
         // desenha base do canhão
         glLineWidth(3);
         glColor4f(1f, 1f, 1f, 1f);

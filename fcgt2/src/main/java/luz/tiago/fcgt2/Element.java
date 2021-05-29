@@ -51,7 +51,7 @@ public abstract class Element {
 
     @Override
     public String toString() {
-        return this.x + "," + this.y + "," + this.z + "@" + this.start;
+        return this.x + "," + this.y + "," + this.z + "@" + this.start + (this.remover ? " [REMOVIDO]" : "");
     }
 
     boolean hasColision(Element el) {

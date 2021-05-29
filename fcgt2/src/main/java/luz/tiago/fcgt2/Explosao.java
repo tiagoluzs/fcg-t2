@@ -16,7 +16,6 @@
  */
 package luz.tiago.fcgt2;
 
-import java.util.Date;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
@@ -39,8 +38,8 @@ public class Explosao extends Element {
     }
 
     Explosao(Canhao canhao) {
-        this.x = canhao.x + 100;
-        this.y = canhao.y + 100;
+        this.x = canhao.x + 50;
+        this.y = canhao.y + 50;
         this.z = canhao.z;
     }
 
@@ -63,8 +62,6 @@ public class Explosao extends Element {
         }
 
         this.calculaIdade();
-
-        System.out.println(this.idade);
 
         if (idade > 1000) {
             this.remover = true;

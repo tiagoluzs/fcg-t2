@@ -99,6 +99,7 @@ public class Sound {
                 rockSequencer.open(); // Open device
                 Sequence sequence = MidiSystem.getSequence(file);
                 rockSequencer.setSequence(sequence); // load it into sequencer
+                rockSequencer.setMicrosecondPosition(9000000);
                 rockSequencer.start();  // start the playback
                 rockSequencer.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
             } catch (MidiUnavailableException | InvalidMidiDataException | IOException ex) {

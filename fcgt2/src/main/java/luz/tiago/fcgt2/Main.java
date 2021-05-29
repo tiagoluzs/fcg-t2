@@ -16,6 +16,8 @@
  */
 package luz.tiago.fcgt2;
 
+import static java.awt.Font.MONOSPACED;
+import static java.awt.Font.PLAIN;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -24,6 +26,7 @@ import java.nio.*;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.JOptionPane;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -49,6 +52,13 @@ public class Main {
     List<Explosao> explosoes;
 
     public static Sound sound;
+
+    int canhaoAtindigo = 0;
+    private int prediosAtindidos = 0;
+    private int aviaoAtingido = 0;
+
+    int totalAvioes = 15;
+    int totalPredios = 10;
 
     public static void main(String[] args) {
         System.out.println("PUCRS - Fundamentos de Computação Gráfica - Tiago Luz - 2021/01");
@@ -78,17 +88,29 @@ public class Main {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while (true);
+            } while (avioes.size() < totalAvioes);
         });
         t.start();
+        
+        Thread tt = new Thread(() -> {
+            do {
+                atiraAviao();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (aviaoAtingido < totalAvioes);
+        });
+        tt.start();
 
     }
 
     int lastAviaoCreated = 0;
     Random random = new Random();
-
-    void createAviao() {
-
+    int lastAviaoAtirou = -1;
+    
+    void atiraAviao() {
         // escolhe um avião para atirar 
         if (avioes.size() > 0) {
             Aviao aviao = null;
@@ -98,12 +120,22 @@ public class Main {
                 if (count == 30) {
                     break;
                 }
-                aviao = avioes.get(random.nextInt(avioes.size()));
-            } while (aviao.remover == false);
+                
+                lastAviaoAtirou++;
+                if(avioes.size() == lastAviaoAtirou) {
+                    lastAviaoAtirou = 0;
+                }
+                
+                aviao = avioes.get(lastAviaoAtirou);
+                
+            } while (aviao.remover == true);
             if (aviao != null) {
                 aviaoAtirar(aviao);
             }
         }
+    }
+    
+    void createAviao() {
 
         long count = this.avioes.parallelStream().filter((d) -> d.remover == false).count();
 
@@ -121,11 +153,11 @@ public class Main {
     private long window;
 
     void createPredios() {
-        int qtd = 10;
-        for (int i = 0; i < qtd; i++) {
+
+        for (int i = 0; i < totalPredios; i++) {
             Predio p = new Predio();
             p.y = 0;
-            p.x = WIDTH / qtd * i;
+            p.x = 5 + (WIDTH / totalPredios * i);
             p.tipo = i % 3;
             predios.add(p);
         }
@@ -225,7 +257,7 @@ public class Main {
 
     void debug() {
         System.out.println("----- debug ------");
-        for (Explosao a : explosoes) {
+        for (Aviao a : avioes) {
             System.out.println(a);
         }
     }
@@ -238,9 +270,9 @@ public class Main {
 
         glLoadIdentity();
 
-        // Desenhar
-        canhao.draw();
+        drawScore();
 
+        // Desenhar
         for (Predio p : predios) {
             p.draw();
         }
@@ -262,6 +294,10 @@ public class Main {
                     t.remover = true;
                     a.remover = true;
                     sound.playExplosion();
+                    prediosAtindidos++;
+                    if (prediosAtindidos == predios.size()) {
+                        gameOver(false, "Todos os prédios foram atindigos.");
+                    }
                     continue;
                 }
             }
@@ -284,7 +320,11 @@ public class Main {
                     explosoes.add(new Explosao(a));
                     t.remover = true;
                     a.remover = true;
+                    aviaoAtingido++;
                     sound.playExplosion();
+                    if (aviaoAtingido == totalAvioes) {
+                        gameOver(true, "Parabéns! Todos os aviões foram abatidos!");
+                    }
                     continue;
                 }
             }
@@ -295,6 +335,26 @@ public class Main {
 
         for (Explosao ex : explosoes) {
             ex.draw();
+        }
+
+        canhao.draw();
+
+        for (Tiro t : tirosAvioes) {
+            if (t.remover) {
+                continue;
+            }
+            if (t.hasColision(canhao)) {
+                canhaoAtindigo++;
+                sound.playExplosion();
+                t.remover = true;
+                explosoes.add(new Explosao(canhao));
+                
+                if (canhaoAtindigo == 3) {
+                    gameOver(false, "Canhão atindigo 3 vezes.");
+                }
+                
+                
+            }
         }
 
         // fim desenhar
@@ -378,5 +438,20 @@ public class Main {
 
     private void aviaoAtirar(Aviao aviao) {
         tirosAvioes.add(new Tiro(aviao));
+    }
+
+    private void drawScore() {
+//        System.out.println("==== SCORE ====");
+//        System.out.println("Predios atingidos: " + prediosAtindidos);
+//        System.out.println("Aviões atingidos: " + aviaoAtingido);
+//        System.out.println("Canhão atingidos: " + canhaoAtindigo);
+    }
+
+    private void gameOver(boolean userWon, String message) {
+        System.out.println("\n\n\n====================\n\n\n");
+        System.out.println("GAME OVER");
+        System.out.println(message);
+        System.exit(0);
+        System.out.println("\n\n\n====================\n\n\n");
     }
 }
